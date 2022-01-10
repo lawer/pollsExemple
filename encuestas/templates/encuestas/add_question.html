@@ -1,0 +1,25 @@
+{% extends 'encuestas/base.html' %}
+{% load crispy_forms_filters %}
+
+{% block contents %}
+    <h1>Add question</h1>
+    {{ request.user }}
+    <form action="" method="post" class="col-6">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <input type="submit" value="Enviar" class="btn btn-primary mt-2">
+    </form>
+    <script>
+        htmx.onLoad(function (content) {
+            flatpickr("#id_pub_date", {
+                "locale": "cat", // locale for this instance only
+                dateFormat: "d/m/Y", // Displays: 2017-01-22Z
+                allowInput: true
+            });
+
+            $('.select').select2();
+
+        });
+    </script>
+{% endblock %}
