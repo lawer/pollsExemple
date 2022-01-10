@@ -2,16 +2,121 @@
 
 {% block contents %}
     {% if ultimas_preguntas %}
-        <ul hx-boost="true">
-            {% for question in ultimas_preguntas %}
-                <li>
-                    <a href="{% url 'detail' question.id %}">
-                        {{ question.question_text }}
+        <table
+                hx-boost="true"
+                hx-select="#app"
+                hx-target="#app"
+        >
+            {% comment %}{% for question in ultimas_preguntas %}
+                <tr>
+                    <td>
+                        <a href="{% url 'detail' question.id %}">
+                            {{ question.question_text }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if question.created_by == request.user or request.user.is_superuser %}
+                        &nbsp; <a href="{% url 'remove_question' question.id %}" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                        {% endif %}
+                        {% if question.created_by == request.user or request.user.is_superuser %}
+                        &nbsp; <a href="{% url 'update_question' question.id %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}{% endcomment %}
+
+        </table>
+        <table class="table table-responsive table-bordered mt-3"
+
+               id="tabla_indice">
+            <thead>
+            <tr>
+                <th>
+                    question_text
+                </th>
+                <th>
+                    pub_date
+                </th>
+                <th>
+                    mood
+                </th>
+                <th>
+                    created_by
+                </th>
+                <th></th>
+            </tr>
+
+            </thead>
+            <tbody>
+            {% for pregunta in ultimas_preguntas %}
+                <tr>
+                    <td>
+                        {{ pregunta.question_text }}
+                    </td>
+                    <td>
+                        {{ pregunta.pub_date }}
+                    </td>
+                    <td>
+                        {{ pregunta.mood }}
+                    </td>
+                    <td>
+                        {{ pregunta.created_by }}
+                    </td>
+                    <td>
+                        &nbsp; <a href="{% url 'remove_question' pregunta.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i>
                     </a>
-                </li>
+                        &nbsp; <a href="{% url 'update_question' pregunta.id %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    </td>
+                </tr>
             {% endfor %}
-        </ul>
+
+            </tbody>
+        </table>
     {% else %}
         <p>No polls are available.</p>
     {% endif %}
+
+    <a href="{% url 'add_question' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+    </a>
+
+    <div id='calendar'></div>
+
+
+    <script>
+        htmx.onLoad(function (content) {
+            /*$('#tabla_indice').DataTable({
+                responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'print'
+                ]
+            });*/
+
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                  initialView: 'listYear',
+                events: [
+                    {% for pregunta in ultimas_preguntas %}
+                        {
+                            title: '{{ pregunta.question_text }}',
+                            start: '{{ pregunta.pub_date.isoformat }}',
+                            allDay: true // will make the time show
+                        },
+                    {% endfor %}
+                ]
+            });
+            calendar.render();
+
+        });
+    </script>
+
+
 {% endblock %}

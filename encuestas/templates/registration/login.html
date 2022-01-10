@@ -1,0 +1,13 @@
+{% extends 'encuestas/base.html' %}
+{% load crispy_forms_filters %}
+
+{% block contents %}
+    <h1>LOGIN</h1>
+    <form action="" method="post" class="col-6 mt-3">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+        <input type="submit" value="Enviar" class="btn btn-primary mt-2">
+    </form>
+
+{% endblock %}
